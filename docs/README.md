@@ -20,11 +20,11 @@ MBGlab adalah platform pengawasan B2G (Business-to-Government) terintegrasi AI d
 
 **Tiga pilar utama:**
 
-| Pilar | Teknologi | Fungsi |
-|---|---|---|
-| 🌡️ IoT Smart Storage | ESP32 + BLE Coin Sensor | Monitor suhu & kelembapan gudang/kulkas real-time, tanpa kabel |
-| 🤖 AI Vision Auditor | YOLO + Smartphone Vendor | Deteksi APD (masker/hairnet) & validasi porsi gizi via "Sidak Acak" |
-| 📊 Dashboard Pemerintah | FastAPI + Web Analytics | Heatmap kepatuhan nasional, penerbitan e-SLHS otomatis, e-Faktur |
+| Pilar                   | Teknologi                | Fungsi                                                              |
+| ----------------------- | ------------------------ | ------------------------------------------------------------------- |
+| 🌡️ IoT Smart Storage    | ESP32 + BLE Coin Sensor  | Monitor suhu & kelembapan gudang/kulkas real-time, tanpa kabel      |
+| 🤖 AI Vision Auditor    | YOLO + Smartphone Vendor | Deteksi APD (masker/hairnet) & validasi porsi gizi via "Sidak Acak" |
+| 📊 Dashboard Pemerintah | FastAPI + Web Analytics  | Heatmap kepatuhan nasional, penerbitan e-SLHS otomatis, e-Faktur    |
 
 ---
 
@@ -33,21 +33,27 @@ MBGlab adalah platform pengawasan B2G (Business-to-Government) terintegrasi AI d
 Buka link di atas, lalu navigasi menggunakan menu di bagian atas halaman:
 
 ### 1. Dashboard Nasional
+
 Tampilan ringkasan kepatuhan seluruh vendor secara nasional, termasuk:
+
 - Heatmap kepatuhan per provinsi
 - KPI real-time: jumlah vendor aktif, anomali suhu, dan audit AI harian
 - Feed peringatan otomatis yang diperbarui setiap beberapa detik
 
 ### 2. IoT Monitor
+
 Simulasi data sensor BLE dari kulkas dan gudang bahan baku:
+
 - Pembacaan suhu dan kelembapan yang berubah setiap 2 detik
 - Sparkline chart per sensor
 - MQTT log stream yang mensimulasikan transmisi data ke server cloud
 
-### 3. Random Audit *(Fitur Utama — Bisa Dicoba Langsung)*
+### 3. Random Audit _(Fitur Utama — Bisa Dicoba Langsung)_
+
 Fitur demonstrasi AI Vision:
 
 **Cara mencoba:**
+
 1. Upload sembarang foto (area dapur, makanan, atau orang yang sedang memasak)
 2. Klik **"Analisis dengan AI"**
 3. Lihat hasil deteksi APD, kebersihan, dan estimasi gizi
@@ -56,7 +62,9 @@ Fitur demonstrasi AI Vision:
 > **Dengan API key Anthropic:** AI Claude sungguhan akan menganalisis foto yang diupload secara langsung.
 
 ### 4. Rapor Vendor
+
 Contoh tampilan aplikasi mobile vendor, mencakup:
+
 - Skor kepatuhan harian dan rekap audit bulanan
 - Validasi gizi per standar BGN
 - Status e-SLHS dan simulasi penandatanganan e-Faktur pencairan dana
@@ -92,7 +100,7 @@ Agar link prototipe di atas bisa diakses publik, aktifkan **GitHub Pages**:
 
 1. Buka repository ini di GitHub
 2. Klik **Settings** → pilih **Pages** di menu kiri
-3. Di bagian *Source*, pilih branch `main` dan folder `/ (root)`
+3. Di bagian _Source_, pilih branch `main` dan folder `/ (root)`
 4. Klik **Save**
 5. Tunggu 1–2 menit, lalu akses di: `https://[USERNAME].github.io/[NAMA-REPO]/mbglab-prototype.html`
 
@@ -117,6 +125,7 @@ Prototipe ini mensimulasikan arsitektur sistem yang direncanakan sebagai berikut
 ```
 
 **Stack yang direncanakan:**
+
 - **IoT:** ESP32 (C++), protokol MQTT dengan enkripsi TLS/SSL
 - **AI/ML:** Python, YOLOv8 (deteksi objek & instance segmentation)
 - **Backend:** FastAPI atau Django, PostgreSQL
@@ -125,4 +134,4 @@ Prototipe ini mensimulasikan arsitektur sistem yang direncanakan sebagai berikut
 
 ---
 
-*Dibuat untuk keperluan seleksi Hackathon [nama hackathon] · [bulan tahun]*
+_Dibuat untuk keperluan seleksi Hackathon [nama hackathon] · [bulan tahun]_
