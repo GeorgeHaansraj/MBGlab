@@ -74,7 +74,7 @@ Contoh tampilan aplikasi mobile vendor, mencakup:
 ## Struktur Repository
 
 ```
-📁 repo ini
+📁 docs
 ├── mbglab-prototype.html   # Seluruh prototipe dalam satu file HTML
 └── README.md               # Dokumen ini
 ```
