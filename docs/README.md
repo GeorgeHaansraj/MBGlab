@@ -7,7 +7,7 @@
 
 ## 🔗 Lihat Prototipe Langsung (Tanpa Install Apapun)
 
-### 👉 [mbglab-prototype.html](https://[USERNAME].github.io/[NAMA-REPO]/mbglab-prototype.html)
+### 👉 https://georgehaansraj.github.io/MBGlab/
 
 > Klik link di atas untuk membuka demo langsung di browser.  
 > Tidak perlu download, tidak perlu install — cukup buka linknya.
