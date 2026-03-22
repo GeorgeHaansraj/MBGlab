@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBGlab — Platform Pengawasan UMKM Katering Terintegrasi AI & IoT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060d1a;
+    --bg2: #0b1628;
+    --bg3: #101e35;
+    --surface: #132140;
+    --surface2: #1a2d52;
+    --border: #1e3460;
+    --border2: #2a4a82;
+    --accent: #00d4ff;
+    --accent2: #0099cc;
+    --green: #00e5a0;
+    --green2: #00b87a;
+    --red: #ff4d6a;
+    --yellow: #ffd060;
+    --text: #e8f0ff;
+    --text2: #8aa4cc;
+    --text3: #4a6a99;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: .4;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 60px;
+    background: rgba(6,13,26,.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-head); font-weight: 800; font-size: 20px;
+    color: var(--accent); letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-badge {
+    background: rgba(0,212,255,.12); border: 1px solid rgba(0,212,255,.3);
+    color: var(--accent); font-family: var(--font-mono); font-size: 10px;
+    padding: 2px 8px; border-radius: 100px; letter-spacing: 1px;
+  }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link {
+    padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    color: var(--text2); cursor: pointer; transition: all .2s;
+    border: none; background: none;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: var(--text); background: var(--surface);
+  }
+  .nav-link.active { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 100px 32px 60px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,255,.08) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,229,160,.05) 0%, transparent 60%);
+    position: relative; text-align: center;
+  }
+  .hero-grid {
+    position: absolute; inset: 0; overflow: hidden; opacity: .15;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 780px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,229,160,.1); border: 1px solid rgba(0,229,160,.25);
+    color: var(--green); font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    padding: 5px 14px; border-radius: 100px; margin-bottom: 28px; text-transform: uppercase;
+  }
+  .hero-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .hero h1 {
+    font-family: var(--font-head); font-size: clamp(38px, 6vw, 68px);
+    font-weight: 800; line-height: 1.05; letter-spacing: -2px;
+    margin-bottom: 20px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    font-size: 17px; color: var(--text2); max-width: 560px; margin: 0 auto 40px;
+    font-weight: 300; line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: var(--bg); font-family: var(--font-head);
+    font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 10px;
+    border: none; cursor: pointer; transition: all .2s; letter-spacing: 0.3px;
+  }
+  .btn-primary:hover { background: #33ddff; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,212,255,.3); }
+  .btn-secondary {
+    background: transparent; color: var(--text); font-family: var(--font-head);
+    font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 10px;
+    border: 1px solid var(--border2); cursor: pointer; transition: all .2s;
+  }
+  .btn-secondary:hover { background: var(--surface); border-color: var(--accent); color: var(--accent); }
+
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px; margin-top: 60px;
+    padding-top: 40px; border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: var(--font-head); font-size: 32px; font-weight: 800;
+    color: var(--accent); line-height: 1; display: block; letter-spacing: -1px;
+  }
+  .stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; letter-spacing: 0.5px; }
+
+  /* ── SECTIONS ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  section.wrap {
+    max-width: 1200px; margin: 0 auto; padding: 80px 32px;
+  }
+  .section-label {
+    font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::before { content: '//'; opacity: .5; }
+  h2.section-title {
+    font-family: var(--font-head); font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800; letter-spacing: -1.5px; margin-bottom: 48px; line-height: 1.1;
+  }
+
+  /* ── DASHBOARD (PAGE 1) ── */
+  .dash-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+    margin-bottom: 24px;
+  }
+  .dash-grid-2 { grid-template-columns: 2fr 1fr; }
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+    transition: border-color .3s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .card-title {
+    font-family: var(--font-mono); font-size: 10px; color: var(--text3);
+    letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+    animation: blink 2s infinite;
+  }
+  .card-val {
+    font-family: var(--font-head); font-size: 36px; font-weight: 800;
+    letter-spacing: -1px; line-height: 1;
+  }
+  .card-sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
+  .card-delta {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-mono); font-size: 11px; margin-top: 8px;
+    padding: 2px 8px; border-radius: 100px;
+  }
+  .delta-up { background: rgba(0,229,160,.1); color: var(--green); }
+  .delta-dn { background: rgba(255,77,106,.1); color: var(--red); }
+
+  /* Heatmap */
+  .heatmap-wrap { position: relative; }
+  .indonesia-svg { width: 100%; height: 180px; }
+  .heatmap-legend {
+    display: flex; align-items: center; gap: 8px; margin-top: 12px;
+    font-size: 11px; color: var(--text3);
+  }
+  .legend-bar {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: linear-gradient(90deg, #ff4d6a, #ffd060, #00e5a0);
+  }
+
+  /* IoT Chart */
+  .chart-wrap { position: relative; height: 120px; margin-top: 8px; }
+  canvas.sparkline { width: 100%; height: 100%; }
+
+  /* Alert list */
+  .alert-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .alert-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg3); border-radius: 10px; padding: 10px 12px;
+    border-left: 3px solid transparent; font-size: 12px;
+  }
+  .alert-item.red { border-color: var(--red); }
+  .alert-item.yellow { border-color: var(--yellow); }
+  .alert-item.green { border-color: var(--green); }
+  .alert-icon { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
+  .alert-text b { color: var(--text); font-weight: 500; display: block; }
+  .alert-text span { color: var(--text3); font-size: 11px; }
+
+  /* Compliance bars */
+  .compliance-item { margin-bottom: 14px; }
+  .compliance-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+  .compliance-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .compliance-fill { height: 100%; border-radius: 3px; transition: width 1.5s cubic-bezier(.16,1,.3,1); }
+
+  /* ── IOT MONITOR (PAGE 2) ── */
+  .sensor-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px; margin-bottom: 32px;
+  }
+  .sensor-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+  }
+  .sensor-card.warning { border-color: rgba(255,208,96,.4); }
+  .sensor-card.danger { border-color: rgba(255,77,106,.5); animation: pulseRed 2s infinite; }
+  @keyframes pulseRed { 0%,100%{box-shadow:none} 50%{box-shadow:0 0 20px rgba(255,77,106,.2)} }
+  .sensor-name { font-family: var(--font-head); font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .sensor-loc { font-size: 11px; color: var(--text3); margin-bottom: 16px; font-family: var(--font-mono); }
+  .sensor-reading {
+    font-family: var(--font-head); font-size: 48px; font-weight: 800;
+    letter-spacing: -2px; line-height: 1;
+  }
+  .sensor-unit { font-size: 18px; color: var(--text2); font-weight: 400; }
+  .sensor-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 8px; padding: 4px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 500;
+  }
+  .status-ok { background: rgba(0,229,160,.1); color: var(--green); }
+  .status-warn { background: rgba(255,208,96,.1); color: var(--yellow); }
+  .status-danger { background: rgba(255,77,106,.1); color: var(--red); }
+  .sensor-mini-chart { height: 50px; margin-top: 14px; }
+  .sensor-footer { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: var(--text3); }
+
+  .mqtt-log {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px; font-family: var(--font-mono); font-size: 12px;
+  }
+  .mqtt-log-title { color: var(--accent); font-size: 11px; margin-bottom: 12px; letter-spacing: 1px; }
+  .mqtt-line { color: var(--text2); padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.03); }
+  .mqtt-line .ts { color: var(--text3); margin-right: 10px; }
+  .mqtt-line .topic { color: var(--green); }
+  .mqtt-line .payload { color: var(--accent); }
+
+  /* ── RANDOM AUDIT (PAGE 3) ── */
+  .audit-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .upload-zone {
+    border: 2px dashed var(--border2); border-radius: 16px; padding: 40px 24px;
+    text-align: center; cursor: pointer; transition: all .3s;
+    background: rgba(0,212,255,.02);
+  }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: rgba(0,212,255,.05); }
+  .upload-icon { font-size: 40px; margin-bottom: 12px; }
+  .upload-zone h3 { font-family: var(--font-head); font-size: 16px; margin-bottom: 6px; }
+  .upload-zone p { font-size: 12px; color: var(--text3); }
+  #fileInput { display: none; }
+  .preview-img {
+    width: 100%; border-radius: 12px; max-height: 220px; object-fit: cover;
+    display: none; margin-top: 16px;
+  }
+  .ai-result-panel {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+  }
+  .ai-result-title { font-family: var(--font-head); font-weight: 700; font-size: 18px; margin-bottom: 20px; }
+  .ai-loading { text-align: center; padding: 40px; display: none; }
+  .ai-spinner {
+    width: 40px; height: 40px; border: 3px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-output { display: none; }
+  .detection-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: var(--bg3); border-radius: 10px; margin-bottom: 8px;
+  }
+  .detection-label { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .detection-badge {
+    padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600;
+    font-family: var(--font-mono);
+  }
+  .badge-ok { background: rgba(0,229,160,.15); color: var(--green); }
+  .badge-fail { background: rgba(255,77,106,.15); color: var(--red); }
+  .badge-warn { background: rgba(255,208,96,.15); color: var(--yellow); }
+  .confidence-bar { height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+  .confidence-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+
+  .audit-score-wrap { text-align: center; padding: 20px 0; }
+  .score-ring {
+    width: 100px; height: 100px; margin: 0 auto 12px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring-text {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: var(--font-head); font-weight: 800; font-size: 22px;
+  }
+  .score-ring-text span { font-size: 11px; font-weight: 400; color: var(--text3); }
+
+  .ai-placeholder { text-align: center; padding: 40px 20px; }
+  .ai-placeholder-icon { font-size: 48px; margin-bottom: 12px; opacity: .3; }
+  .ai-placeholder p { color: var(--text3); font-size: 13px; }
+
+  .api-key-wrap {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .api-key-wrap label { font-size: 11px; color: var(--text3); white-space: nowrap; font-family: var(--font-mono); }
+  .api-key-wrap input {
+    flex: 1; background: none; border: none; color: var(--text);
+    font-family: var(--font-mono); font-size: 12px; outline: none;
+  }
+
+  /* ── VENDOR RAPOR (PAGE 4) ── */
+  .rapor-header {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    flex-wrap: wrap;
+  }
+  .vendor-info h3 { font-family: var(--font-head); font-size: 20px; font-weight: 700; }
+  .vendor-info p { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .vendor-id { font-family: var(--font-mono); font-size: 11px; color: var(--accent); margin-top: 4px; }
+  .overall-score {
+    text-align: center; min-width: 120px;
+  }
+  .overall-score .big {
+    font-family: var(--font-head); font-size: 56px; font-weight: 800;
+    letter-spacing: -2px; color: var(--green); line-height: 1;
+  }
+  .overall-score .label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
+  .slhs-badge {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: rgba(0,229,160,.08); border: 1px solid rgba(0,229,160,.25);
+    border-radius: 12px; padding: 16px 20px;
+  }
+  .slhs-badge .slhs-icon { font-size: 28px; }
+  .slhs-badge .slhs-label { font-size: 11px; color: var(--green); font-weight: 600; letter-spacing: 0.5px; }
+  .slhs-badge .slhs-sub { font-size: 10px; color: var(--text3); }
+
+  .rapor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .rapor-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+  }
+  .rapor-card-title {
+    font-family: var(--font-head); font-size: 14px; font-weight: 700;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .rapor-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .rapor-row:last-child { border-bottom: none; }
+  .rapor-row .rk { color: var(--text2); }
+  .rapor-row .rv { font-family: var(--font-mono); font-size: 12px; }
+  .tag { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .tag-ok { background: rgba(0,229,160,.15); color: var(--green); }
+  .tag-fail { background: rgba(255,77,106,.15); color: var(--red); }
+  .tag-warn { background: rgba(255,208,96,.15); color: var(--yellow); }
+
+  .invoice-section {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+  }
+  .invoice-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .invoice-item {
+    display: flex; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .invoice-item:last-child { border-bottom: none; }
+  .invoice-total {
+    display: flex; justify-content: space-between; padding-top: 12px; margin-top: 4px;
+    font-family: var(--font-head); font-size: 18px; font-weight: 700;
+    color: var(--green);
+  }
+  .sign-btn {
+    width: 100%; margin-top: 16px; background: var(--green);
+    color: var(--bg); font-family: var(--font-head); font-weight: 700;
+    font-size: 15px; padding: 14px; border-radius: 12px; border: none;
+    cursor: pointer; transition: all .2s; letter-spacing: 0.3px;
+  }
+  .sign-btn:hover { background: #33eeaa; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,229,160,.3); }
+  .sign-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px) {
+    nav { padding: 0 16px; }
+    .nav-links { gap: 2px; }
+    .nav-link { padding: 6px 10px; font-size: 12px; }
+    section.wrap { padding: 60px 16px; }
+    .dash-grid, .dash-grid-2, .audit-layout, .rapor-grid { grid-template-columns: 1fr; }
+    .rapor-header { flex-direction: column; }
+    .hero { padding: 80px 16px 40px; }
+    .hero-stats { gap: 24px; }
+  }
+
+  /* ── TRANSITIONS ── */
+  .fade-in { animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+  /* notification toast */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 200;
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 12px 18px; font-size: 13px;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    animation: slideUp .4s cubic-bezier(.16,1,.3,1);
+    max-width: 320px;
+  }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:none;opacity:1} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">MBG<span>lab</span> <div class="nav-badge">LIVE DEMO</div></div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-link" onclick="showPage('iot')">IoT Monitor</button>
+    <button class="nav-link" onclick="showPage('audit')">Random Audit</button>
+    <button class="nav-link" onclick="showPage('rapor')">Rapor Vendor</button>
+  </div>
+</nav>
+
+<!-- ════════════════ PAGE: HERO / DASHBOARD ════════════════ -->
+<div id="page-dashboard" class="page active">
+
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content fade-in">
+      <div class="hero-tag">Sistem Aktif · 47.832 Dapur Terpantau</div>
+      <h1>Platform Pengawasan<br>Katering MBG<br><em>Terintegrasi AI & IoT</em></h1>
+      <p class="hero-sub">Validasi proaktif keamanan pangan UMKM secara real-time — dari sensor kulkas hingga deteksi APD berbasis AI, tanpa kabel, tanpa manipulasi.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="showPage('audit')">▶ Coba Demo AI Audit</button>
+        <button class="btn-secondary" onclick="showPage('iot')">Lihat Monitor IoT</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" id="statVendor">47.832</span><div class="stat-label">Vendor Aktif</div></div>
+        <div class="stat"><span class="stat-num" id="statCompliance">84.2%</span><div class="stat-label">Tingkat Kepatuhan</div></div>
+        <div class="stat"><span class="stat-num" id="statSLHS">1.204</span><div class="stat-label">e-SLHS Diterbitkan</div></div>
+        <div class="stat"><span class="stat-num" id="statAlert">23</span><div class="stat-label">Peringatan Aktif</div></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="wrap" style="padding-top:0">
+    <div class="section-label">Ringkasan Nasional</div>
+    <h2 class="section-title">Peta Kepatuhan <em style="color:var(--accent)">Real-Time</em></h2>
+
+    <div class="dash-grid">
+      <!-- KPI cards -->
+      <div class="card">
+        <div class="card-title">Vendor Compliant Hari Ini <div class="dot"></div></div>
+        <div class="card-val" style="color:var(--green)">38.461</div>
+        <div class="card-sub">dari 47.832 vendor terdaftar</div>
+        <div class="card-delta delta-up">↑ +2.4% vs kemarin</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Anomali Suhu Terdeteksi <div class="dot" style="background:var(--red)"></div></div>
+        <div class="card-val" style="color:var(--red)">23</div>
+        <div class="card-sub">kulkas / gudang di luar batas aman</div>
+        <div class="card-delta delta-dn">↑ +5 dari baseline</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Audit AI Hari Ini <div class="dot" style="background:var(--yellow)"></div></div>
+        <div class="card-val" style="color:var(--yellow)">2.847</div>
+        <div class="card-sub">sidak acak berhasil diproses</div>
+        <div class="card-delta delta-up">↑ +18% vs minggu lalu</div>
+      </div>
+    </div>
+
+    <div class="dash-grid dash-grid-2">
+      <!-- Heatmap -->
+      <div class="card">
+        <div class="card-title">Heatmap Kepatuhan Nasional</div>
+        <div class="heatmap-wrap">
+          <svg class="indonesia-svg" viewBox="0 0 700 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Simplified Indonesia outline -->
+            <defs>
+              <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#00e5a0" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#00e5a0" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="g2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ff4d6a" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#ff4d6a" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="g3" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffd060" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#ffd060" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <!-- Sumatra -->
+            <ellipse cx="155" cy="105" rx="120" ry="28" fill="#1a2d52" stroke="#2a4a82" stroke-width="1" transform="rotate(-12,155,105)"/>
+            <ellipse cx="155" cy="105" rx="100" ry="22" fill="url(#g1)" transform="rotate(-12,155,105)"/>
+            <!-- Java -->
+            <ellipse cx="340" cy="148" rx="80" ry="16" fill="#1a2d52" stroke="#2a4a82" stroke-width="1" transform="rotate(-5,340,148)"/>
+            <ellipse cx="340" cy="148" rx="65" ry="12" fill="url(#g2)" transform="rotate(-5,340,148)"/>
+            <!-- Kalimantan -->
+            <ellipse cx="390" cy="80" rx="75" ry="55" fill="#1a2d52" stroke="#2a4a82" stroke-width="1"/>
+            <ellipse cx="390" cy="80" rx="60" ry="44" fill="url(#g1)" />
+            <!-- Sulawesi -->
+            <path d="M490,60 Q510,50 525,70 Q540,90 530,110 Q520,130 505,120 Q490,100 490,60Z" fill="#1a2d52" stroke="#2a4a82" stroke-width="1"/>
+            <path d="M492,65 Q510,55 522,72 Q535,90 526,108 Q516,126 503,116 Q491,98 492,65Z" fill="url(#g3)"/>
+            <!-- Papua -->
+            <ellipse cx="620" cy="90" rx="65" ry="42" fill="#1a2d52" stroke="#2a4a82" stroke-width="1"/>
+            <ellipse cx="620" cy="90" rx="52" ry="34" fill="url(#g1)"/>
+            <!-- Dots for major cities -->
+            <circle cx="200" cy="145" r="5" fill="#ff4d6a" opacity=".9"><animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite"/></circle>
+            <circle cx="200" cy="145" r="12" fill="#ff4d6a" opacity=".2"/>
+            <circle cx="310" cy="148" r="4" fill="#ffd060" opacity=".9"><animate attributeName="r" values="4;6;4" dur="2.5s" repeatCount="indefinite"/></circle>
+            <circle cx="385" cy="155" r="5" fill="#00e5a0" opacity=".9"/>
+            <circle cx="390" cy="80" r="4" fill="#00e5a0" opacity=".8"/>
+            <circle cx="490" cy="90" r="3" fill="#ffd060" opacity=".8"/>
+            <circle cx="615" cy="90" r="4" fill="#00e5a0" opacity=".8"/>
+            <!-- Labels -->
+            <text x="155" y="95" fill="#8aa4cc" font-size="9" text-anchor="middle" font-family="DM Mono,monospace">SUMATRA</text>
+            <text x="335" y="142" fill="#8aa4cc" font-size="9" text-anchor="middle" font-family="DM Mono,monospace">JAWA</text>
+            <text x="390" y="75" fill="#8aa4cc" font-size="9" text-anchor="middle" font-family="DM Mono,monospace">KALIMANTAN</text>
+            <text x="510" y="85" fill="#8aa4cc" font-size="8" text-anchor="middle" font-family="DM Mono,monospace">SULAWESI</text>
+            <text x="620" y="83" fill="#8aa4cc" font-size="9" text-anchor="middle" font-family="DM Mono,monospace">PAPUA</text>
+          </svg>
+          <div class="heatmap-legend">
+            <span>Rendah</span>
+            <div class="legend-bar"></div>
+            <span>Tinggi</span>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:12px; font-size:11px; color:var(--text3)">
+            <span>🔴 Kritis: 3 kota</span>
+            <span>🟡 Perhatian: 8 kota</span>
+            <span>🟢 Baik: 23 kota</span>
+          </div>
+        </div>
+      </div>
+      <!-- Alerts -->
+      <div class="card">
+        <div class="card-title">Peringatan Aktif <div class="dot" style="background:var(--red)"></div></div>
+        <div class="alert-list" id="alertList">
+          <div class="alert-item red">
+            <div class="alert-icon">🌡️</div>
+            <div class="alert-text"><b>Kulkas Pak Budi – Jakarta Timur</b><span>Suhu: 12°C (batas: 4°C) · 14 menit lalu</span></div>
+          </div>
+          <div class="alert-item red">
+            <div class="alert-icon">🚫</div>
+            <div class="alert-text"><b>Audit Gagal – Dapur Ibu Sari</b><span>Masker tidak terdeteksi · Depok · 28 menit lalu</span></div>
+          </div>
+          <div class="alert-item yellow">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-text"><b>Kelembapan Tinggi – Gudang Beras Maju</b><span>RH: 82% (batas: 70%) · Bandung · 1 jam lalu</span></div>
+          </div>
+          <div class="alert-item green">
+            <div class="alert-icon">✅</div>
+            <div class="alert-text"><b>SLHS Diterbitkan – UD Makmur</b><span>Kepatuhan 97% · Surabaya · 2 jam lalu</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compliance bars -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">Tingkat Kepatuhan per Kategori</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px">
+        <div>
+          <div class="compliance-item">
+            <div class="compliance-header"><span>APD Pekerja (Masker & Hairnet)</span><span style="color:var(--green)">91%</span></div>
+            <div class="compliance-bar"><div class="compliance-fill" style="width:91%;background:var(--green)"></div></div>
+          </div>
+          <div class="compliance-item">
+            <div class="compliance-header"><span>Suhu Penyimpanan Daging</span><span style="color:var(--yellow)">74%</span></div>
+            <div class="compliance-bar"><div class="compliance-fill" style="width:74%;background:var(--yellow)"></div></div>
+          </div>
+          <div class="compliance-item">
+            <div class="compliance-header"><span>Kelembapan Gudang Bahan Kering</span><span style="color:var(--green)">86%</span></div>
+            <div class="compliance-bar"><div class="compliance-fill" style="width:86%;background:var(--green)"></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="compliance-item">
+            <div class="compliance-header"><span>Standar Porsi Gizi (BGN)</span><span style="color:var(--yellow)">78%</span></div>
+            <div class="compliance-bar"><div class="compliance-fill" style="width:78%;background:var(--yellow)"></div></div>
+          </div>
+          <div class="compliance-item">
+            <div class="compliance-header"><span>Respons Random Audit (≤3 menit)</span><span style="color:var(--green)">88%</span></div>
+            <div class="compliance-bar"><div class="compliance-fill" style="width:88%;background:var(--green)"></div></div>
+          </div>
+          <div class="compliance-item">
+            <div class="compliance-header"><span>Kelengkapan Dokumen SLHS</span><span style="color:var(--red)">63%</span></div>
+            <div class="compliance-bar"><div class="compliance-fill" style="width:63%;background:var(--red)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════ PAGE: IOT MONITOR ════════════════ -->
+<div id="page-iot" class="page">
+  <section class="wrap">
+    <div class="section-label">IoT Smart Storage</div>
+    <h2 class="section-title">Monitor Sensor <em style="color:var(--accent)">Real-Time</em></h2>
+
+    <div class="sensor-grid" id="sensorGrid">
+      <!-- Generated by JS -->
+    </div>
+
+    <div class="mqtt-log">
+      <div class="mqtt-log-title">// MQTT LOG STREAM — mbglab/telemetry</div>
+      <div id="mqttLog"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════ PAGE: RANDOM AUDIT ════════════════ -->
+<div id="page-audit" class="page">
+  <section class="wrap">
+    <div class="section-label">AI Vision Auditor</div>
+    <h2 class="section-title">Simulasi <em style="color:var(--accent)">Random Audit</em></h2>
+    <p style="color:var(--text2);margin-bottom:32px;font-size:15px">Upload foto area dapur atau pekerja. AI akan menganalisis kepatuhan APD, kondisi kebersihan, dan estimasi standar gizi secara otomatis.</p>
+
+    <div class="audit-layout">
+      <div>
+        <div class="api-key-wrap">
+          <label>ANTHROPIC API KEY</label>
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+        </div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📷</div>
+          <h3>Upload Foto Audit</h3>
+          <p>Foto area dapur, pekerja, atau sampel makanan<br>JPG / PNG · maks 10MB</p>
+          <img id="previewImg" class="preview-img" alt="preview"/>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" onchange="handleFileUpload(event)">
+
+        <div style="margin-top:12px; display:flex; align-items:center; justify-content:space-between">
+          <div style="font-size:11px;color:var(--text3)">
+            <b style="color:var(--yellow)">Mode Sidak:</b> Vendor diberi notifikasi mendadak.<br>
+            Rekaman harus selesai dalam <b style="color:var(--accent)">3 menit</b>.
+          </div>
+          <div id="auditTimer" style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:700;display:none">3:00</div>
+        </div>
+
+        <button class="btn-primary" style="width:100%;margin-top:16px" id="analyzeBtn" onclick="runAudit()" disabled>
+          🔍 Analisis dengan AI
+        </button>
+      </div>
+
+      <div class="ai-result-panel">
+        <div class="ai-result-title">Hasil Analisis AI</div>
+        <div class="ai-placeholder" id="aiPlaceholder">
+          <div class="ai-placeholder-icon">🤖</div>
+          <p>Upload foto dan masukkan API key Anthropic<br>untuk memulai analisis AI nyata.</p>
+        </div>
+        <div class="ai-loading" id="aiLoading">
+          <div class="ai-spinner"></div>
+          <p style="color:var(--text2);font-size:13px">Model YOLO memproses frame...<br><span style="color:var(--text3);font-size:11px">Mendeteksi APD, kebersihan, dan standar gizi</span></p>
+        </div>
+        <div class="ai-output" id="aiOutput"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════ PAGE: RAPOR VENDOR ════════════════ -->
+<div id="page-rapor" class="page">
+  <section class="wrap">
+    <div class="section-label">Aplikasi Mobile Vendor</div>
+    <h2 class="section-title">Rapor Harian & <em style="color:var(--accent)">e-Faktur</em></h2>
+
+    <div class="rapor-header">
+      <div class="vendor-info">
+        <h3>UD Berkah Nusantara</h3>
+        <p>Jl. Pahlawan No.12, Palembang, Sumatra Selatan</p>
+        <div class="vendor-id">VENDOR-ID: MBG-SUM-00847 · Terdaftar: 12 Jan 2025</div>
+      </div>
+      <div class="overall-score">
+        <div class="big">91</div>
+        <div class="label">SKOR KEPATUHAN</div>
+        <div style="font-size:11px;color:var(--green);margin-top:4px">● HIJAU – Sangat Baik</div>
+      </div>
+      <div class="slhs-badge">
+        <div class="slhs-icon">🏅</div>
+        <div class="slhs-label">e-SLHS AKTIF</div>
+        <div class="slhs-sub">Berlaku s/d 31 Des 2025</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:4px">SLHS-2025-SUM-0847</div>
+      </div>
+    </div>
+
+    <div class="rapor-grid">
+      <div class="rapor-card">
+        <div class="rapor-card-title">📊 Rekap Audit Bulan Ini</div>
+        <div class="rapor-row"><span class="rk">Total Sidak Diterima</span><span class="rv">18 kali</span></div>
+        <div class="rapor-row"><span class="rk">Respons ≤ 3 Menit</span><span class="rv" style="color:var(--green)">17/18 <span class="tag tag-ok">94%</span></span></div>
+        <div class="rapor-row"><span class="rk">APD Terdeteksi Lengkap</span><span class="rv" style="color:var(--green)">16/18 <span class="tag tag-ok">89%</span></span></div>
+        <div class="rapor-row"><span class="rk">Standar Porsi Terpenuhi</span><span class="rv" style="color:var(--yellow)">14/18 <span class="tag tag-warn">78%</span></span></div>
+        <div class="rapor-row"><span class="rk">Pelanggaran Kritis</span><span class="rv" style="color:var(--green)">0 <span class="tag tag-ok">NIHIL</span></span></div>
+      </div>
+
+      <div class="rapor-card">
+        <div class="rapor-card-title">🌡️ Kondisi Penyimpanan</div>
+        <div class="rapor-row"><span class="rk">Kulkas Daging (rata-rata)</span><span class="rv" style="color:var(--green)">2.8°C <span class="tag tag-ok">AMAN</span></span></div>
+        <div class="rapor-row"><span class="rk">Freezer Sayuran (rata-rata)</span><span class="rv" style="color:var(--green)">-15.2°C <span class="tag tag-ok">AMAN</span></span></div>
+        <div class="rapor-row"><span class="rk">Gudang Beras (kelembapan)</span><span class="rv" style="color:var(--yellow)">68% RH <span class="tag tag-warn">PERHATIAN</span></span></div>
+        <div class="rapor-row"><span class="rk">Anomali Terdeteksi</span><span class="rv">1 kejadian</span></div>
+        <div class="rapor-row"><span class="rk">Respons Anomali</span><span class="rv" style="color:var(--green)">12 menit <span class="tag tag-ok">CEPAT</span></span></div>
+      </div>
+
+      <div class="rapor-card">
+        <div class="rapor-card-title">🥗 Validasi Gizi (BGN)</div>
+        <div class="rapor-row"><span class="rk">Nasi (karbohidrat)</span><span class="rv" style="color:var(--green)">200g avg <span class="tag tag-ok">SESUAI</span></span></div>
+        <div class="rapor-row"><span class="rk">Protein (ayam/ikan)</span><span class="rv" style="color:var(--green)">85g avg <span class="tag tag-ok">SESUAI</span></span></div>
+        <div class="rapor-row"><span class="rk">Sayuran</span><span class="rv" style="color:var(--yellow)">65g avg <span class="tag tag-warn">KURANG</span></span></div>
+        <div class="rapor-row"><span class="rk">Buah</span><span class="rv" style="color:var(--red)">Tidak terdeteksi <span class="tag tag-fail">GAGAL</span></span></div>
+        <div class="rapor-row"><span class="rk">Estimasi Kalori/Porsi</span><span class="rv">~620 kkal</span></div>
+      </div>
+
+      <div class="rapor-card">
+        <div class="rapor-card-title">📋 Status Dokumen</div>
+        <div class="rapor-row"><span class="rk">e-SLHS</span><span class="rv" style="color:var(--green)">Aktif <span class="tag tag-ok">VALID</span></span></div>
+        <div class="rapor-row"><span class="rk">Sertifikat Halal</span><span class="rv" style="color:var(--green)">Aktif <span class="tag tag-ok">VALID</span></span></div>
+        <div class="rapor-row"><span class="rk">Izin PIRT</span><span class="rv" style="color:var(--green)">Aktif <span class="tag tag-ok">VALID</span></span></div>
+        <div class="rapor-row"><span class="rk">Pelatihan Higiene</span><span class="rv" style="color:var(--yellow)">Perlu Diperbarui <span class="tag tag-warn">60 hari</span></span></div>
+        <div class="rapor-row"><span class="rk">Tanda Tangan Digital</span><span class="rv" style="color:var(--green)">Privy ID · Terverifikasi</span></div>
+      </div>
+    </div>
+
+    <div class="invoice-section">
+      <div class="invoice-title">💳 e-Faktur Pencairan Dana — Periode: November 2025</div>
+      <div class="invoice-item"><span style="color:var(--text2)">Jasa Katering MBG · 450 porsi × 30 hari</span><span style="font-family:var(--font-mono)">Rp 121.500.000</span></div>
+      <div class="invoice-item"><span style="color:var(--text2)">Bonus Kepatuhan (skor ≥ 90%)</span><span style="font-family:var(--font-mono);color:var(--green)">+ Rp 6.000.000</span></div>
+      <div class="invoice-item"><span style="color:var(--text2)">Potongan: 1 pelanggaran gizi</span><span style="font-family:var(--font-mono);color:var(--red)">− Rp 1.500.000</span></div>
+      <div class="invoice-total">
+        <span>TOTAL PENCAIRAN</span>
+        <span>Rp 126.000.000</span>
+      </div>
+      <button class="sign-btn" id="signBtn" onclick="signInvoice()">
+        🖊 Tanda Tangani & Ajukan e-Faktur (Privy ID)
+      </button>
+      <div id="signResult" style="display:none;margin-top:12px;text-align:center;font-size:13px;color:var(--green)">
+        ✅ e-Faktur berhasil ditandatangani! Pencairan diproses dalam 1×24 jam.
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('page-' + name).classList.add('fade-in');
+  event && event.target && event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  if (name === 'iot') initIoT();
+  if (name === 'dashboard') animateStats();
+}
+
+// ══════════════════════════════════════════
+//  HERO STATS ANIMATION
+// ══════════════════════════════════════════
+function animateStats() {
+  animateNum('statVendor', 0, 47832, 1200);
+  animateNum('statSLHS', 0, 1204, 1000);
+  animateNum('statAlert', 0, 23, 800);
+}
+function animateNum(id, from, to, dur) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = performance.now();
+  const isFloat = String(to).includes('.');
+  function step(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const val = from + (to - from) * ease;
+    el.textContent = isFloat ? val.toFixed(1) + '%' : Math.round(val).toLocaleString('id-ID');
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+animateStats();
+
+// ══════════════════════════════════════════
+//  IOT MONITOR
+// ══════════════════════════════════════════
+const sensors = [
+  { id: 's1', name: 'Kulkas Daging #1', loc: 'Zona A – Rak Bawah', unit: '°C', val: 3.2, min: -2, max: 8, warn: 6, danger: 8, status: 'ok', vendorId: 'MBG-SUM-00847' },
+  { id: 's2', name: 'Kulkas Sayuran', loc: 'Zona B – Rak Tengah', unit: '°C', val: 4.8, min: 0, max: 12, warn: 8, danger: 10, status: 'ok', vendorId: 'MBG-SUM-00847' },
+  { id: 's3', name: 'Freezer Daging', loc: 'Zona A – Unit Stand-alone', unit: '°C', val: -15.3, min: -25, max: -10, warn: -12, danger: -10, status: 'ok', vendorId: 'MBG-SUM-00847' },
+  { id: 's4', name: 'Gudang Beras', loc: 'Gudang Kering – Rak Utama', unit: '% RH', val: 68.4, min: 40, max: 85, warn: 70, danger: 80, status: 'warn', vendorId: 'MBG-SUM-00847' },
+  { id: 's5', name: 'Kulkas Daging #2', loc: 'Zona C – Milik Pak Budi', unit: '°C', val: 12.1, min: -2, max: 12, warn: 6, danger: 8, status: 'danger', vendorId: 'MBG-JAK-00124' },
+  { id: 's6', name: 'Gudang Tepung', loc: 'Gudang Kering – Unit B', unit: '% RH', val: 58.2, min: 40, max: 85, warn: 70, danger: 80, status: 'ok', vendorId: 'MBG-SUM-00847' },
+];
+
+const sensorHistory = {};
+sensors.forEach(s => {
+  sensorHistory[s.id] = Array.from({length:20}, () => s.val + (Math.random()-.5)*2);
+});
+
+let iotInitialized = false;
+function initIoT() {
+  if (iotInitialized) return;
+  iotInitialized = true;
+  renderSensors();
+  startMqttLog();
+  setInterval(updateSensors, 2000);
+}
+
+function renderSensors() {
+  const grid = document.getElementById('sensorGrid');
+  grid.innerHTML = sensors.map(s => {
+    const pct = Math.min(100, Math.max(0, ((s.val - s.min) / (s.max - s.min)) * 100));
+    const barColor = s.status === 'danger' ? 'var(--red)' : s.status === 'warn' ? 'var(--yellow)' : 'var(--green)';
+    const statusClass = { ok: 'status-ok', warn: 'status-warn', danger: 'status-danger' }[s.status];
+    const statusLabel = { ok: '● AMAN', warn: '⚠ PERHATIAN', danger: '🚨 BAHAYA' }[s.status];
+    return `<div class="sensor-card ${s.status}" id="card-${s.id}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="sensor-name">${s.name}</div>
+          <div class="sensor-loc">${s.loc}</div>
+        </div>
+        <div class="sensor-status ${statusClass}">${statusLabel}</div>
+      </div>
+      <div class="sensor-reading" style="color:${barColor}" id="val-${s.id}">${s.val.toFixed(1)}<span class="sensor-unit">${s.unit}</span></div>
+      <div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:10px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${barColor};border-radius:2px;transition:width .5s" id="bar-${s.id}"></div>
+      </div>
+      <canvas class="sensor-mini-chart" id="chart-${s.id}" height="50"></canvas>
+      <div class="sensor-footer">
+        <span>📡 BLE · ${s.vendorId}</span>
+        <span id="ts-${s.id}">${new Date().toLocaleTimeString('id-ID')}</span>
+      </div>
+    </div>`;
+  }).join('');
+  sensors.forEach(s => drawSparkline(s));
+}
+
+function drawSparkline(s) {
+  const canvas = document.getElementById('chart-' + s.id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth || 260;
+  canvas.height = 50;
+  const data = sensorHistory[s.id];
+  const mn = Math.min(...data), mx = Math.max(...data);
+  const range = mx - mn || 1;
+  const color = s.status === 'danger' ? '#ff4d6a' : s.status === 'warn' ? '#ffd060' : '#00e5a0';
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const gradient = ctx.createLinearGradient(0, 0, 0, 50);
+  gradient.addColorStop(0, color + '44');
+  gradient.addColorStop(1, color + '00');
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = (i / (data.length - 1)) * canvas.width;
+    const y = canvas.height - ((v - mn) / range) * canvas.height * 0.8 - 4;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(0, canvas.height);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+}
+
+function updateSensors() {
+  sensors.forEach(s => {
+    const drift = (Math.random() - 0.48) * 0.4;
+    s.val = parseFloat((s.val + drift).toFixed(1));
+    sensorHistory[s.id].push(s.val);
+    sensorHistory[s.id].shift();
+    const valEl = document.getElementById('val-' + s.id);
+    const barEl = document.getElementById('bar-' + s.id);
+    const tsEl = document.getElementById('ts-' + s.id);
+    if (valEl) valEl.innerHTML = `${s.val.toFixed(1)}<span class="sensor-unit">${s.unit}</span>`;
+    if (barEl) {
+      const pct = Math.min(100, Math.max(0, ((s.val - s.min) / (s.max - s.min)) * 100));
+      barEl.style.width = pct + '%';
+    }
+    if (tsEl) tsEl.textContent = new Date().toLocaleTimeString('id-ID');
+    drawSparkline(s);
+  });
+  addMqttLine();
+}
+
+let mqttLines = [];
+function startMqttLog() {
+  for (let i = 0; i < 5; i++) addMqttLine();
+  setInterval(addMqttLine, 2200);
+}
+function addMqttLine() {
+  const s = sensors[Math.floor(Math.random() * sensors.length)];
+  const ts = new Date().toLocaleTimeString('id-ID');
+  const topic = `mbglab/iot/${s.vendorId.toLowerCase()}/${s.id}`;
+  const payload = JSON.stringify({ val: s.val, unit: s.unit, status: s.status, ts });
+  const line = `<div class="mqtt-line"><span class="ts">${ts}</span><span class="topic">${topic}</span> <span class="payload">${payload}</span></div>`;
+  const log = document.getElementById('mqttLog');
+  if (!log) return;
+  log.insertAdjacentHTML('afterbegin', line);
+  const lines = log.querySelectorAll('.mqtt-line');
+  if (lines.length > 12) lines[lines.length - 1].remove();
+}
+
+// ══════════════════════════════════════════
+//  RANDOM AUDIT
+// ══════════════════════════════════════════
+let uploadedFile = null;
+let timerInterval = null;
+
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('previewImg');
+    img.src = e.target.result;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('analyzeBtn').disabled = false;
+
+  // Start timer
+  clearInterval(timerInterval);
+  let seconds = 180;
+  const timerEl = document.getElementById('auditTimer');
+  timerEl.style.display = 'block';
+  timerInterval = setInterval(() => {
+    seconds--;
+    const m = Math.floor(seconds / 60);
+    const s = String(seconds % 60).padStart(2, '0');
+    timerEl.textContent = `${m}:${s}`;
+    timerEl.style.color = seconds < 30 ? 'var(--red)' : 'var(--accent)';
+    if (seconds <= 0) clearInterval(timerInterval);
+  }, 1000);
+}
+
+// Drag & drop
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const dt = new DataTransfer(); dt.items.add(file);
+    document.getElementById('fileInput').files = dt.files;
+    handleFileUpload({ target: { files: [file] } });
+  }
+});
+
+async function runAudit() {
+  if (!uploadedFile) return;
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+
+  document.getElementById('aiPlaceholder').style.display = 'none';
+  document.getElementById('aiLoading').style.display = 'block';
+  document.getElementById('aiOutput').style.display = 'none';
+
+  try {
+    let resultData;
+    if (apiKey) {
+      // Real Anthropic API call
+      const base64 = await fileToBase64(uploadedFile);
+      const mediaType = uploadedFile.type || 'image/jpeg';
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+              { type: 'text', text: `Kamu adalah sistem AI MBGlab yang mengaudit dapur UMKM katering untuk program Makan Bergizi Gratis (MBG) pemerintah Indonesia.
+
+Analisis gambar ini dan berikan hasil audit dalam format JSON berikut. HANYA balas dengan JSON, tidak ada teks lain:
+
+{
+  "score": <angka 0-100>,
+  "status": "<LULUS|PERHATIAN|GAGAL>",
+  "ringkasan": "<1 kalimat ringkasan hasil audit>",
+  "deteksi": [
+    {"kategori": "APD Masker", "hasil": "<Terdeteksi|Tidak Terdeteksi|Tidak Relevan>", "status": "<ok|warn|fail>", "confidence": <0-100>, "catatan": "<catatan singkat>"},
+    {"kategori": "APD Hairnet", "hasil": "<Terdeteksi|Tidak Terdeteksi|Tidak Relevan>", "status": "<ok|warn|fail>", "confidence": <0-100>, "catatan": "<catatan singkat>"},
+    {"kategori": "Kebersihan Area", "hasil": "<Bersih|Cukup Bersih|Kotor>", "status": "<ok|warn|fail>", "confidence": <0-100>, "catatan": "<catatan singkat>"},
+    {"kategori": "Standar Porsi Gizi", "hasil": "<Sesuai|Kurang|Berlebih|Tidak Terlihat>", "status": "<ok|warn|fail>", "confidence": <0-100>, "catatan": "<catatan singkat>"},
+    {"kategori": "Kontaminasi Silang", "hasil": "<Tidak Terdeteksi|Potensi Risiko|Terdeteksi>", "status": "<ok|warn|fail>", "confidence": <0-100>, "catatan": "<catatan singkat>"}
+  ],
+  "rekomendasi": ["<rekomendasi 1>", "<rekomendasi 2>"],
+  "slhs_eligible": <true|false>
+}` }
+            ]
+          }]
+        })
+      });
+      const data = await response.json();
+      const text = data.content.map(c => c.text || '').join('');
+      const clean = text.replace(/```json|```/g, '').trim();
+      resultData = JSON.parse(clean);
+    } else {
+      // Demo mode: simulated result
+      await new Promise(r => setTimeout(r, 2200));
+      resultData = {
+        score: 76,
+        status: 'PERHATIAN',
+        ringkasan: 'Area dapur terlihat cukup bersih, namun ditemukan ketidaksesuaian pada APD dan estimasi porsi gizi.',
+        deteksi: [
+          { kategori: 'APD Masker', hasil: 'Terdeteksi', status: 'ok', confidence: 91, catatan: 'Masker terpasang dengan benar.' },
+          { kategori: 'APD Hairnet', hasil: 'Tidak Terdeteksi', status: 'fail', confidence: 87, catatan: 'Tidak ada hairnet yang terlihat.' },
+          { kategori: 'Kebersihan Area', hasil: 'Cukup Bersih', status: 'warn', confidence: 73, catatan: 'Terdapat noda di permukaan meja kerja.' },
+          { kategori: 'Standar Porsi Gizi', hasil: 'Kurang', status: 'warn', confidence: 68, catatan: 'Porsi sayuran estimasi di bawah 75g.' },
+          { kategori: 'Kontaminasi Silang', hasil: 'Tidak Terdeteksi', status: 'ok', confidence: 84, catatan: 'Pemisahan bahan mentah dan matang terlihat baik.' },
+        ],
+        rekomendasi: ['Wajibkan hairnet untuk semua pekerja dapur.', 'Tingkatkan porsi sayuran agar sesuai standar BGN 2025.'],
+        slhs_eligible: false
+      };
+    }
+    renderAuditResult(resultData);
+  } catch (err) {
+    document.getElementById('aiLoading').style.display = 'none';
+    document.getElementById('aiOutput').style.display = 'block';
+    document.getElementById('aiOutput').innerHTML = `<div style="color:var(--red);font-size:13px;padding:20px;text-align:center">
+      ⚠ Terjadi kesalahan: ${err.message}<br><small style="color:var(--text3)">Pastikan API key valid dan gambar bisa diakses.</small>
+    </div>`;
+  }
+}
+
+function renderAuditResult(data) {
+  document.getElementById('aiLoading').style.display = 'none';
+  const output = document.getElementById('aiOutput');
+  output.style.display = 'block';
+
+  const scoreColor = data.score >= 85 ? 'var(--green)' : data.score >= 65 ? 'var(--yellow)' : 'var(--red)';
+  const circumference = 2 * Math.PI * 40;
+  const dashOffset = circumference * (1 - data.score / 100);
+
+  const statusMap = { ok: 'badge-ok', warn: 'badge-warn', fail: 'badge-fail' };
+  const hasilIcon = { ok: '✅', warn: '⚠️', fail: '❌' };
+
+  output.innerHTML = `
+    <div class="audit-score-wrap">
+      <div class="score-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg3)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="${scoreColor}" stroke-width="8"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}"
+            stroke-linecap="round" style="transition:stroke-dashoffset 1s ease"/>
+        </svg>
+        <div class="score-ring-text" style="color:${scoreColor}">${data.score}<span>/100</span></div>
+      </div>
+      <div style="font-family:var(--font-head);font-weight:700;color:${scoreColor};font-size:16px">${data.status}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px;max-width:240px;margin-left:auto;margin-right:auto">${data.ringkasan}</div>
+    </div>
+    <div style="margin-top:20px">
+      ${data.deteksi.map(d => `
+        <div class="detection-item">
+          <div class="detection-label">
+            ${hasilIcon[d.status]} <span>${d.kategori}</span>
+          </div>
+          <div style="text-align:right">
+            <div class="detection-badge ${statusMap[d.status]}">${d.hasil}</div>
+            <div class="confidence-bar" style="width:80px;margin-top:4px">
+              <div class="confidence-fill" style="width:${d.confidence}%"></div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">${d.confidence}% confidence</div>
+          </div>
+        </div>
+        ${d.catatan ? `<div style="font-size:11px;color:var(--text3);padding:0 8px 8px;margin-top:-4px">${d.catatan}</div>` : ''}
+      `).join('')}
+    </div>
+    ${data.rekomendasi?.length ? `
+      <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:12px">
+        <div style="font-size:11px;color:var(--accent);font-family:var(--font-mono);margin-bottom:8px">REKOMENDASI AI</div>
+        ${data.rekomendasi.map(r => `<div style="font-size:12px;color:var(--text2);padding:3px 0">→ ${r}</div>`).join('')}
+      </div>
+    ` : ''}
+    <div style="margin-top:14px;padding:12px 14px;border-radius:10px;font-size:12px;text-align:center;
+      ${data.slhs_eligible ? 'background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.2)' : 'background:rgba(255,77,106,.08);color:var(--red);border:1px solid rgba(255,77,106,.2)'}">
+      ${data.slhs_eligible ? '🏅 Memenuhi syarat penerbitan e-SLHS otomatis' : '⛔ Belum memenuhi syarat e-SLHS — perbaikan diperlukan'}
+    </div>
+  `;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════
+//  E-FAKTUR SIGN
+// ══════════════════════════════════════════
+function signInvoice() {
+  const btn = document.getElementById('signBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Memproses tanda tangan digital...';
+  setTimeout(() => {
+    document.getElementById('signResult').style.display = 'block';
+    btn.textContent = '✅ Ditandatangani';
+    showToast('🎉 e-Faktur Rp 126.000.000 berhasil dikirim ke BGN!');
+  }, 2000);
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// ══════════════════════════════════════════
+//  LIVE ALERT TICKER (Dashboard)
+// ══════════════════════════════════════════
+const newAlerts = [
+  { type: 'green', icon: '✅', title: 'SLHS Baru – Warung Pak Soleh', sub: 'Skor 94% · Semarang · Baru saja' },
+  { type: 'yellow', icon: '⚠️', title: 'Audit Terlambat – Dapur Bu Ratna', sub: 'Respons 4m 20d (batas 3 menit) · Solo · 5 menit lalu' },
+  { type: 'red', icon: '🌡️', title: 'Suhu Kritis – Freezer CV Maju Jaya', sub: 'Suhu: -8°C (batas -12°C) · Medan · 8 menit lalu' },
+];
+let alertIdx = 0;
+setInterval(() => {
+  const list = document.getElementById('alertList');
+  if (!list) return;
+  const a = newAlerts[alertIdx % newAlerts.length];
+  alertIdx++;
+  const div = document.createElement('div');
+  div.className = `alert-item ${a.type}`;
+  div.style.animation = 'fadeIn .4s ease';
+  div.innerHTML = `<div class="alert-icon">${a.icon}</div><div class="alert-text"><b>${a.title}</b><span>${a.sub}</span></div>`;
+  list.insertBefore(div, list.firstChild);
+  if (list.children.length > 5) list.lastChild.remove();
+}, 6000);
+</script>
+</body>
+</html>
