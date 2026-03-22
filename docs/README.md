@@ -75,7 +75,7 @@ Contoh tampilan aplikasi mobile vendor, mencakup:
 
 ```
 📁 docs
-├── mbglab-prototype.html   # Seluruh prototipe dalam satu file HTML
+├── index.html   # Seluruh prototipe dalam satu file HTML
 └── README.md               # Dokumen ini
 ```
 
@@ -87,7 +87,7 @@ Seluruh prototipe dibuat dalam satu file HTML mandiri (tanpa framework eksternal
 
 Jika ingin membuka prototipe secara offline:
 
-1. Download file `mbglab-prototype.html` dari repository ini
+1. Download file `index.html` dari repository ini
 2. Buka file tersebut langsung di browser (Chrome, Firefox, atau Edge)
 
 Tidak ada langkah instalasi tambahan yang diperlukan.
